@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cannabis Review Board</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0A0A0A; --bg-card: #111111; --bg-elevated: #181818;
+  --text-primary: #F5F5F0; --text-secondary: #8A8A85; --text-muted: #555550;
+  --accent: #C8FF00; --signal-red: #FF3B30; --border: #222220;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text-primary); font-family: 'DM Mono', 'Courier New', monospace; line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 24px 48px; background: rgba(10,10,10,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+.nav-wordmark { font-weight: 500; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--text-primary); }
+.nav-wordmark span { color: var(--accent); }
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text-secondary); text-decoration: none; transition: color 0.3s; }
+.nav-links a:hover { color: var(--text-primary); }
+.hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 120px 48px 80px; position: relative; }
+.hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse 800px 600px at 50% 40%, rgba(200,255,0,0.015) 0%, transparent 100%), repeating-linear-gradient(0deg, transparent, transparent 99px, rgba(255,255,255,0.015) 99px, rgba(255,255,255,0.015) 100px); pointer-events: none; }
+.hero-label { font-size: 10px; letter-spacing: 6px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 48px; opacity: 0; animation: fadeUp 1s ease 0.2s forwards; }
+.hero h1 { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; font-size: clamp(36px, 6vw, 72px); line-height: 1.1; letter-spacing: -1px; color: var(--text-primary); max-width: 800px; margin-bottom: 40px; opacity: 0; animation: fadeUp 1s ease 0.4s forwards; }
+.hero h1 em { font-style: italic; color: var(--accent); }
+.hero-sub { font-size: 13px; line-height: 2; color: var(--text-secondary); max-width: 480px; letter-spacing: 0.5px; opacity: 0; animation: fadeUp 1s ease 0.6s forwards; }
+.hero-sub strong { color: var(--text-primary); font-weight: 400; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.ticker-wrap { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; background: var(--bg-card); }
+.ticker { display: flex; animation: scroll 30s linear infinite; width: max-content; }
+.ticker-item { display: flex; align-items: center; gap: 12px; padding: 16px 40px; white-space: nowrap; border-right: 1px solid var(--border); }
+.ticker-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+.ticker-value { font-size: 14px; font-weight: 500; color: var(--accent); font-family: 'DM Mono', monospace; }
+@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+section { padding: 96px 48px; }
+.section-label { font-size: 9px; letter-spacing: 5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+.section-title { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; font-size: clamp(24px, 3vw, 36px); color: var(--text-primary); margin-bottom: 48px; letter-spacing: -0.5px; }
+.intel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+.intel-card { background: var(--bg-card); padding: 40px 32px; position: relative; transition: background 0.3s; cursor: pointer; }
+.intel-card:hover { background: var(--bg-elevated); }
+.intel-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0; background: var(--accent); transition: height 0.4s ease; }
+.intel-card:hover::before { height: 100%; }
+.intel-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; display: inline-block; }
+.intel-tag.regulatory { color: var(--signal-red); }
+.intel-headline { font-family: 'Instrument Serif', Georgia, serif; font-size: 22px; font-weight: 400; line-height: 1.3; color: var(--text-primary); margin-bottom: 16px; }
+.intel-sub { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+.intel-meta { margin-top: 24px; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 0 48px; }
+.metric { background: var(--bg); padding: 40px 32px; text-align: center; }
+.metric-value { font-family: 'DM Mono', monospace; font-size: clamp(28px, 4vw, 48px); font-weight: 300; color: var(--text-primary); letter-spacing: -1px; line-height: 1; margin-bottom: 12px; }
+.metric-value .accent { color: var(--accent); }
+.metric-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
+.alignment-section { padding: 96px 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.alignment-text h2 { font-family: 'Instrument Serif', Georgia, serif; font-size: clamp(28px, 3.5vw, 44px); font-weight: 400; line-height: 1.15; margin-bottom: 32px; }
+.alignment-text h2 em { color: var(--signal-red); font-style: italic; }
+.alignment-text p { font-size: 13px; color: var(--text-secondary); line-height: 1.8; max-width: 440px; }
+.bar-group { margin-bottom: 32px; }
+.bar-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+.bar-track { height: 6px; background: var(--bg-elevated); position: relative; overflow: hidden; }
+.bar-fill { height: 100%; position: absolute; top: 0; left: 0; }
+.bar-fill.active { background: var(--text-secondary); }
+.bar-fill.aligned { background: var(--accent); }
+.bar-fill.retail { background: var(--text-primary); }
+.bar-fill.hemp { background: var(--signal-red); }
+.bar-stat { margin-top: 8px; font-size: 12px; color: var(--text-secondary); }
+.bar-stat strong { color: var(--text-primary); font-weight: 500; }
+.cta-section { padding: 120px 48px; text-align: center; border-top: 1px solid var(--border); }
+.cta-section h2 { font-family: 'Instrument Serif', Georgia, serif; font-size: clamp(28px, 4vw, 48px); font-weight: 400; margin-bottom: 20px; }
+.cta-section p { font-size: 13px; color: var(--text-secondary); margin-bottom: 40px; line-height: 1.8; }
+.cta-btn { display: inline-block; padding: 16px 48px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all 0.3s; }
+.cta-btn:hover { background: var(--accent); color: var(--bg); }
+footer { padding: 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.footer-left { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
+.footer-right { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; }
+.status-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; display: inline-block; margin-right: 8px; animation: pulse 2s ease infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@media (max-width: 768px) {
+  nav { padding: 16px 24px; } .nav-links { display: none; } section { padding: 64px 24px; }
+  .metrics { grid-template-columns: repeat(2, 1fr); margin: 0 24px; }
+  .alignment-section { grid-template-columns: 1fr; gap: 48px; padding: 64px 24px; }
+  .cta-section { padding: 80px 24px; } footer { padding: 32px 24px; flex-direction: column; gap: 16px; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-wordmark">THE CANNABIS REVIEW <span>BOARD</span></div>
+  <ul class="nav-links">
+    <li><a href="#intelligence">Intelligence</a></li>
+    <li><a href="#data">Live Data</a></li>
+    <li><a href="#insights">Insights</a></li>
+    <li><a href="#access">Access</a></li>
+  </ul>
+</nav>
+<section class="hero">
+  <div class="hero-label">Cannabis Market Intelligence</div>
+  <h1>We do not cover<br>the industry.<br>We <em>expose</em> it.</h1>
+  <p class="hero-sub">Market intelligence. Pricing truth. Structural analysis.<br><strong>One system of record.</strong></p>
+</section>
+<div class="ticker-wrap">
+  <div class="ticker">
+    <div class="ticker-item"><span class="ticker-label">NY Active Licenses</span><span class="ticker-value">869</span></div>
+    <div class="ticker-item"><span class="ticker-label">Retail Dealers</span><span class="ticker-value">574</span></div>
+    <div class="ticker-item"><span class="ticker-label">Data Alignment</span><span class="ticker-value">37.8%</span></div>
+    <div class="ticker-item"><span class="ticker-label">Hemp Retail Share</span><span class="ticker-value">93.1%</span></div>
+    <div class="ticker-item"><span class="ticker-label">Medical Providers</span><span class="ticker-value">1,000</span></div>
+    <div class="ticker-item"><span class="ticker-label">Operational Rate</span><span class="ticker-value">87%</span></div>
+    <div class="ticker-item"><span class="ticker-label">NY Active Licenses</span><span class="ticker-value">869</span></div>
+    <div class="ticker-item"><span class="ticker-label">Retail Dealers</span><span class="ticker-value">574</span></div>
+    <div class="ticker-item"><span class="ticker-label">Data Alignment</span><span class="ticker-value">37.8%</span></div>
+    <div class="ticker-item"><span class="ticker-label">Hemp Retail Share</span><span class="ticker-value">93.1%</span></div>
+    <div class="ticker-item"><span class="ticker-label">Medical Providers</span><span class="ticker-value">1,000</span></div>
+    <div class="ticker-item"><span class="ticker-label">Operational Rate</span><span class="ticker-value">87%</span></div>
+  </div>
+</div>
+<div class="metrics">
+  <div class="metric"><div class="metric-value">1,000</div><div class="metric-label">Licenses Issued</div></div>
+  <div class="metric"><div class="metric-value">869</div><div class="metric-label">Active Operations</div></div>
+  <div class="metric"><div class="metric-value"><span class="accent">37.8</span>%</div><div class="metric-label">Data Alignment Rate</div></div>
+  <div class="metric"><div class="metric-value">574</div><div class="metric-label">Retail Dealers</div></div>
+</div>
+<section id="intelligence">
+  <div class="section-label">Latest Intelligence</div>
+  <div class="section-title">Published when the data demands it.</div>
+  <div class="intel-grid">
+    <div class="intel-card">
+      <div class="intel-tag">Market Report</div>
+      <div class="intel-headline">New York Cannabis Market: Structural Reality</div>
+      <div class="intel-sub">1,000 licenses issued. 869 active. The gap between registration and alignment tells the real story of this market.</div>
+      <div class="intel-meta"><span class="status-dot"></span> April 2026 &mdash; 8 min read</div>
+    </div>
+    <div class="intel-card">
+      <div class="intel-tag">Price Intelligence</div>
+      <div class="intel-headline">NYC Retail Pricing Index</div>
+      <div class="intel-sub">What dispensaries charge vs. what the market supports. The first standardized pricing layer for New York cannabis.</div>
+      <div class="intel-meta">Forthcoming</div>
+    </div>
+    <div class="intel-card">
+      <div class="intel-tag regulatory">Regulatory</div>
+      <div class="intel-headline">The 37.8% Problem</div>
+      <div class="intel-sub">When state data systems do not agree, no one has the truth. A structural analysis of New York's data fragmentation.</div>
+      <div class="intel-meta"><span class="status-dot"></span> April 2026 &mdash; 5 min read</div>
+    </div>
+  </div>
+</section>
+<div class="alignment-section" id="data">
+  <div class="alignment-text">
+    <div class="section-label">Data Reconciliation</div>
+    <h2>The state's data systems were never built to <em>agree.</em></h2>
+    <p>Retail registrations, OCM licenses, and hemp permits operate as parallel structures with no shared identifier. TCRB reconciles what the state will not.</p>
+  </div>
+  <div class="alignment-chart">
+    <div class="bar-group">
+      <div class="bar-label">Licenses Active (87%)</div>
+      <div class="bar-track"><div class="bar-fill active" style="width: 87%;"></div></div>
+      <div class="bar-stat"><strong>869</strong> of 1,000</div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-label">OCM Alignment Rate (37.8%)</div>
+      <div class="bar-track"><div class="bar-fill aligned" style="width: 37.8%;"></div></div>
+      <div class="bar-stat"><strong>37.8%</strong> retailer-to-license match</div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-label">Retail Dealers (574)</div>
+      <div class="bar-track"><div class="bar-fill retail" style="width: 57.4%;"></div></div>
+      <div class="bar-stat"><strong>574</strong> registered</div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-label">Hemp Retail Concentration (93.1%)</div>
+      <div class="bar-track"><div class="bar-fill hemp" style="width: 93.1%;"></div></div>
+      <div class="bar-stat"><strong>931</strong> of 1,000 hemp licenses</div>
+    </div>
+  </div>
+</div>
+<section class="cta-section" id="access">
+  <div class="section-label">Restricted Access</div>
+  <h2>Intelligence, not content.</h2>
+  <p>TCRB data is available to qualified operators, investors,<br>institutions, and media partners.</p>
+  <a class="cta-btn" href="#">Request Access</a>
+</section>
+<footer>
+  <div class="footer-left">The Cannabis Review Board &mdash; System of Record</div>
+  <div class="footer-right">New York &bull; 2026</div>
+</footer>
+</body>
+</html>
