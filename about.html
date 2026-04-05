@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About &mdash; The Cannabis Review Board</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0A0A0A; --bg-card: #111111; --bg-elevated: #181818;
+  --text-primary: #F5F5F0; --text-secondary: #8A8A85; --text-muted: #555550;
+  --accent: #C8FF00; --signal-red: #FF3B30; --border: #222220;
+}
+body { background: var(--bg); color: var(--text-primary); font-family: 'DM Mono', 'Courier New', monospace; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 24px 48px; background: rgba(10,10,10,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+.nav-wordmark { font-weight: 500; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--text-primary); text-decoration: none; }
+.nav-wordmark span { color: var(--accent); }
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text-secondary); text-decoration: none; transition: color 0.3s; }
+.nav-links a:hover { color: var(--text-primary); }
+.page-header { padding: 160px 48px 64px; max-width: 900px; margin: 0 auto; }
+.page-tag { font-size: 9px; letter-spacing: 5px; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+.page-header h1 { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; font-size: clamp(36px, 5vw, 60px); line-height: 1.1; letter-spacing: -1px; margin-bottom: 32px; }
+.page-header h1 em { color: var(--accent); font-style: italic; }
+.page-header .lead { font-size: 15px; color: var(--text-secondary); line-height: 1.9; max-width: 640px; }
+.about-content { max-width: 900px; margin: 0 auto; padding: 0 48px; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 64px 0; }
+.two-col { display: grid; grid-template-columns: 200px 1fr; gap: 48px; margin-bottom: 64px; }
+.two-col .col-label { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--text-muted); padding-top: 6px; }
+.two-col .col-body p { font-size: 13px; color: var(--text-secondary); line-height: 1.85; margin-bottom: 20px; }
+.two-col .col-body strong { color: var(--text-primary); font-weight: 400; }
+.pillars { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 48px 0; }
+.pillar { background: var(--bg-card); padding: 36px 32px; }
+.pillar-num { font-size: 10px; color: var(--accent); letter-spacing: 3px; margin-bottom: 12px; }
+.pillar h3 { font-family: 'Instrument Serif', Georgia, serif; font-size: 20px; font-weight: 400; color: var(--text-primary); margin-bottom: 12px; }
+.pillar p { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+.entity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 48px 0; }
+.entity { background: var(--bg-card); padding: 48px 36px; }
+.entity-tag { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px; }
+.entity-tag.for-profit { color: var(--accent); }
+.entity-tag.nonprofit { color: var(--signal-red); }
+.entity h3 { font-family: 'Instrument Serif', Georgia, serif; font-size: 24px; font-weight: 400; color: var(--text-primary); margin-bottom: 16px; }
+.entity p { font-size: 12px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px; }
+.entity .detail { font-size: 11px; color: var(--text-muted); line-height: 1.7; }
+.v-pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 48px 0; }
+.v-pillar { background: var(--bg-card); padding: 32px 24px; }
+.v-pillar h4 { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--signal-red); margin-bottom: 12px; font-weight: 500; }
+.v-pillar p { font-size: 11px; color: var(--text-secondary); line-height: 1.7; }
+.closing { text-align: center; padding: 96px 48px; max-width: 700px; margin: 0 auto; }
+.closing h2 { font-family: 'Instrument Serif', Georgia, serif; font-size: clamp(24px, 3vw, 36px); font-weight: 400; line-height: 1.4; margin-bottom: 24px; color: var(--text-primary); }
+.closing h2 em { color: var(--accent); font-style: italic; }
+.closing h2 .red { color: var(--signal-red); }
+.closing p { font-size: 13px; color: var(--text-muted); line-height: 1.8; }
+footer { padding: 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: 0 auto; }
+.footer-left { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
+.footer-right a { color: var(--accent); text-decoration: none; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
+@media (max-width: 768px) {
+  nav { padding: 16px 24px; } .nav-links { display: none; }
+  .page-header { padding: 120px 24px 48px; } .about-content { padding: 0 24px; }
+  .two-col { grid-template-columns: 1fr; gap: 16px; }
+  .pillars, .entity-grid { grid-template-columns: 1fr; }
+  .v-pillars { grid-template-columns: 1fr 1fr; }
+  .closing { padding: 64px 24px; }
+  footer { padding: 32px 24px; flex-direction: column; gap: 16px; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-wordmark" href="index.html">THE CANNABIS REVIEW <span>BOARD</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Dashboard</a></li>
+    <li><a href="reports.html">Reports</a></li>
+    <li><a href="insights.html">Insights</a></li>
+    <li><a href="contact.html">Access</a></li>
+  </ul>
+</nav>
+<div class="page-header">
+  <div class="page-tag">About TCRB</div>
+  <h1>A review board that doesn't just critique the market&mdash;it <em>defines</em> it.</h1>
+  <p class="lead">The Cannabis Review Board exists to establish a transparent, data-driven, and culturally aware standard of evaluation for cannabis products, operators, and markets. We are committed to transforming cannabis from a fragmented, perception-driven industry into a measurable, accountable, and editorially documented ecosystem&mdash;where quality, safety, and authenticity are not assumed, but verified.</p>
+</div>
+<div class="about-content">
+<hr class="divider">
+<div class="two-col">
+  <div class="col-label">What We Are</div>
+  <div class="col-body">
+    <p>TCRB operates at the intersection of <strong>consumer protection</strong>, <strong>industry accountability</strong>, <strong>cultural documentation</strong>, and <strong>market intelligence</strong>.</p>
+    <p>Inspired by regulatory bodies that prioritize public safety and standards, and advocacy groups that emphasize equity and access, TCRB advances a new model: institutional-grade cannabis intelligence with editorial independence.</p>
+  </div>
+</div>
+<div class="two-col">
+  <div class="col-label">What We Are Not</div>
+  <div class="col-body">
+    <p>We are not a blog. Not a dispensary. Not a media company. Not a consultancy that accepts payment in exchange for favorable coverage. TCRB maintains editorial independence from advertisers and operators. Our methodology is documented. Our scoring is consistent. Our conflicts of interest are firewalled.</p>
+  </div>
+</div>
+<hr class="divider">
+<div class="page-tag">Core Objectives</div>
+<div class="pillars">
+  <div class="pillar"><div class="pillar-num">01</div><h3>Standardization of Quality</h3><p>Develop and enforce a proprietary review framework for cannabis products and retail environments. Score based on composition, experience, transparency, pricing integrity, and cultural alignment.</p></div>
+  <div class="pillar"><div class="pillar-num">02</div><h3>Public-Facing Transparency</h3><p>Deliver clear, accessible reviews that translate industry complexity into consumer understanding. Build a trusted archive of cannabis intelligence.</p></div>
+  <div class="pillar"><div class="pillar-num">03</div><h3>Industry Accountability</h3><p>Hold brands, dispensaries, and operators to consistent, visible standards. Reward excellence while exposing mediocrity.</p></div>
+  <div class="pillar"><div class="pillar-num">04</div><h3>Cultural Preservation</h3><p>Document the evolving identity of cannabis across regions, communities, and generations. Protect legacy influence from being erased by commercialization.</p></div>
+</div>
+<div class="two-col">
+  <div class="col-label">05 &mdash; Data Infrastructure</div>
+  <div class="col-body"><p>Power a live ecosystem via <strong>Policy &amp; Plant</strong>&mdash;the analytical backbone of TCRB&mdash;that tracks pricing trends, product categories, operator performance, and regulatory shifts. All outputs are real-time, verifiable, and systematized.</p></div>
+</div>
+<hr class="divider">
+<div class="page-tag">Structural Integrity</div>
+<p style="font-size: 13px; color: var(--text-secondary); line-height: 1.8; margin: 16px 0 32px; max-width: 640px;">TCRB is designed as a dual-entity system to ensure both credibility and operational independence.</p>
+<div class="entity-grid">
+  <div class="entity">
+    <div class="entity-tag for-profit">For-Profit Arm</div>
+    <h3>TCRB Inc.</h3>
+    <p>Operates as a media, data, and intelligence company. Generates revenue through premium reports, licensing data, brand audits, and partnerships.</p>
+    <p class="detail">Internal review panels modeled after compliance boards and advisory commissions. Built on conflict-of-interest firewalls, review standard consistency, and documented scoring methodology. Editorial independence is structural, not aspirational.</p>
+  </div>
+  <div class="entity">
+    <div class="entity-tag nonprofit">Nonprofit Arm</div>
+    <h3>The Vineyard Foundation</h3>
+    <p>The nonprofit extension of TCRB, dedicated to restoration, education, and equity within the cannabis ecosystem and beyond.</p>
+    <p style="font-family: 'Instrument Serif', Georgia, serif; font-size: 16px; color: var(--text-primary); line-height: 1.5; margin: 20px 0;">Where TCRB defines the market, The Vineyard Foundation rebuilds the soil it grows from.</p>
+    <p class="detail">Registered as a nonprofit entity (501(c)(3) target). Receives donations, grants, and a percentage of TCRB profits. Clear separation from TCRB's commercial operations prevents pay-to-play influence and biased evaluations.</p>
+  </div>
+</div>
+<hr class="divider">
+<div class="page-tag" style="color: var(--signal-red);">The Vineyard Foundation &mdash; Mission</div>
+<p style="font-size: 13px; color: var(--text-secondary); line-height: 1.8; margin: 16px 0 8px; max-width: 640px;">To reinvest knowledge, resources, and capital into communities impacted by prohibition, systemic neglect, and economic exclusion&mdash;while cultivating pathways for ownership, wellness, and environmental harmony.</p>
+<div class="v-pillars">
+  <div class="v-pillar"><h4>Equity &amp; Restoration</h4><p>Support individuals and communities disproportionately affected by cannabis criminalization. Provide pathways into legal industry participation, expungement resources, and workforce development.</p></div>
+  <div class="v-pillar"><h4>Education &amp; Access</h4><p>Deliver public education on cannabis science, responsible consumption, and market literacy. Bridge the gap between consumer and operator knowledge.</p></div>
+  <div class="v-pillar"><h4>Environmental Stewardship</h4><p>Promote sustainable cultivation and urban green initiatives. Support projects like Brick &amp; Bloom. Reinforce the connection between cannabis and land.</p></div>
+  <div class="v-pillar"><h4>Wellness &amp; Community</h4><p>Fund and support initiatives tied to mental health (Still Waters), autism support (Autism Trust Seed Fund), and pet care (Tail End Trust).</p></div>
+</div>
+</div>
+<div class="closing">
+  <h2>The Cannabis Review Board is the <em>lens.</em><br>The Vineyard Foundation is the <span class="red">soil.</span></h2>
+  <p>One defines value. The other restores it.</p>
+</div>
+<footer>
+  <div class="footer-left">TCRB &mdash; System of Record</div>
+  <div class="footer-right"><a href="index.html">Return to Dashboard</a></div>
+</footer>
+</body>
+</html>

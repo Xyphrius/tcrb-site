@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Reports — The Cannabis Review Board</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #0A0A0A; --bg-card: #111111; --bg-elevated: #181818; --text-primary: #F5F5F0; --text-secondary: #8A8A85; --text-muted: #555550; --accent: #C8FF00; --signal-red: #FF3B30; --border: #222220; }
+body { background: var(--bg); color: var(--text-primary); font-family: 'DM Mono', 'Courier New', monospace; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 24px 48px; background: rgba(10,10,10,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+.nav-wordmark { font-weight: 500; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--text-primary); text-decoration: none; } .nav-wordmark span { color: var(--accent); }
+.nav-links { display: flex; gap: 32px; list-style: none; } .nav-links a { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text-secondary); text-decoration: none; transition: color 0.3s; } .nav-links a:hover { color: var(--text-primary); }
+.page-header { padding: 160px 48px 48px; max-width: 1000px; margin: 0 auto; }
+.page-tag { font-size: 9px; letter-spacing: 5px; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+.page-header h1 { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; font-size: clamp(32px, 4.5vw, 52px); line-height: 1.1; letter-spacing: -1px; margin-bottom: 16px; }
+.page-header .sub { font-size: 13px; color: var(--text-muted); }
+.filter-bar { max-width: 1000px; margin: 0 auto; padding: 0 48px; display: flex; gap: 12px; margin-bottom: 48px; flex-wrap: wrap; }
+.filter-btn { padding: 8px 20px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; background: transparent; border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; transition: all 0.3s; } .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); }
+.reports-grid { max-width: 1000px; margin: 0 auto; padding: 0 48px 96px; display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+.report-card { background: var(--bg-card); padding: 40px 36px; display: grid; grid-template-columns: 120px 1fr 160px; gap: 32px; align-items: start; text-decoration: none; transition: background 0.3s; position: relative; } .report-card:hover { background: var(--bg-elevated); }
+.report-card::after { content: ''; position: absolute; right: 0; top: 0; width: 0; height: 100%; background: var(--accent); transition: width 0.3s; } .report-card:hover::after { width: 3px; }
+.report-date { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; padding-top: 4px; }
+.report-tag { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; display: inline-block; } .report-tag.pricing { color: #C8FF00; } .report-tag.regulatory { color: var(--signal-red); } .report-tag.competitive { color: var(--text-primary); } .report-tag.licensing { color: var(--text-secondary); }
+.report-title { font-family: 'Instrument Serif', Georgia, serif; font-size: 22px; font-weight: 400; color: var(--text-primary); line-height: 1.3; margin-bottom: 10px; }
+.report-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+.report-meta { text-align: right; padding-top: 4px; }
+.report-status { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; padding: 4px 12px; display: inline-block; margin-bottom: 8px; } .report-status.live { color: var(--accent); border: 1px solid var(--accent); } .report-status.forthcoming { color: var(--text-muted); border: 1px solid var(--border); }
+.report-read { font-size: 10px; color: var(--text-muted); }
+.status-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; display: inline-block; margin-right: 6px; animation: pulse 2s ease infinite; } @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+footer { padding: 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto; } .footer-left { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); } .footer-right a { color: var(--accent); text-decoration: none; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
+@media (max-width: 768px) { nav { padding: 16px 24px; } .nav-links { display: none; } .page-header { padding: 120px 24px 32px; } .filter-bar { padding: 0 24px; } .reports-grid { padding: 0 24px 64px; } .report-card { grid-template-columns: 1fr; gap: 12px; padding: 28px 24px; } .report-meta { text-align: left; } footer { padding: 32px 24px; flex-direction: column; gap: 16px; } }
+</style>
+</head>
+<body>
+<nav><a class="nav-wordmark" href="index.html">THE CANNABIS REVIEW <span>BOARD</span></a><ul class="nav-links"><li><a href="about.html">About</a></li><li><a href="insights.html">Insights</a></li><li><a href="contact.html">Access</a></li></ul></nav>
+<div class="page-header"><div class="page-tag">Market Reports</div><h1>State-level analysis. Pricing intelligence. License tracking.</h1><p class="sub">Published when the data demands it, not on a content calendar.</p></div>
+<div class="filter-bar"><button class="filter-btn active">All</button><button class="filter-btn">Pricing</button><button class="filter-btn">Licensing</button><button class="filter-btn">Competitive</button><button class="filter-btn">Regulatory</button></div>
+<div class="reports-grid">
+  <a class="report-card" href="report.html"><div class="report-date">Apr 2026</div><div class="report-body"><div class="report-tag">Market Intelligence</div><div class="report-title">New York Cannabis: The $3.3 Billion Structural Reality</div><div class="report-desc">2,204 licenses issued. 623 dispensaries open. 54.8% YoY growth. The fastest-growing large cannabis market in the country — and the structural pressures scaling with it.</div></div><div class="report-meta"><div class="report-status live"><span class="status-dot"></span>Live</div><div class="report-read">10 min read</div></div></a>
+  <a class="report-card" href="#"><div class="report-date">Apr 2026</div><div class="report-body"><div class="report-tag regulatory">Regulatory</div><div class="report-title">The Commerce Clause Challenge: What It Means for NY Licensing</div><div class="report-desc">A federal judge ruled the constitutional challenge to NY's equity-based licensing framework will proceed. 57% of all licenses were awarded under SEE criteria. The implications are structural.</div></div><div class="report-meta"><div class="report-status forthcoming">Forthcoming</div></div></a>
+  <a class="report-card" href="#"><div class="report-date">Apr 2026</div><div class="report-body"><div class="report-tag pricing">Price Intelligence</div><div class="report-title">NYC Retail Pricing Index: $31.29 and Falling</div><div class="report-desc">Average item prices down 11.6% year-over-year. Cross-dispensary pricing breakdown by product category, borough, and operator type. Who survives the margin squeeze.</div></div><div class="report-meta"><div class="report-status forthcoming">Forthcoming</div></div></a>
+  <a class="report-card" href="#"><div class="report-date">Q2 2026</div><div class="report-body"><div class="report-tag licensing">License Tracking</div><div class="report-title">NY License Conversion Index: 2,204 Issued, 623 Operational</div><div class="report-desc">71.7% of licensed retail has not opened. Geographic distribution, conversion timelines, and the real estate bottleneck replacing regulatory delay as the primary constraint.</div></div><div class="report-meta"><div class="report-status forthcoming">Forthcoming</div></div></a>
+  <a class="report-card" href="#"><div class="report-date">Q2 2026</div><div class="report-body"><div class="report-tag competitive">Competitive Landscape</div><div class="report-title">The Beverage Signal: Category Growth and Brand Positioning</div><div class="report-desc">Cannabis beverages up 88.2% YoY. Tea and coffee +223.8%. Who is leading. Who is entering. Where the format-driven consumer is headed.</div></div><div class="report-meta"><div class="report-status forthcoming">Forthcoming</div></div></a>
+  <a class="report-card" href="#"><div class="report-date">Q2 2026</div><div class="report-body"><div class="report-tag">Market Intelligence</div><div class="report-title">Medical Cannabis Cannibalization: The -30% Structural Decline</div><div class="report-desc">Medical revenue fell 30% year-over-year as adult-use captures the patient base. 19 registered organizations facing channel erosion. What the long-term medical program looks like.</div></div><div class="report-meta"><div class="report-status forthcoming">Forthcoming</div></div></a>
+</div>
+<footer><div class="footer-left">TCRB — System of Record</div><div class="footer-right"><a href="index.html">Return to Dashboard</a></div></footer>
+</body>
+</html>

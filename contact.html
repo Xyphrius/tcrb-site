@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access — The Cannabis Review Board</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #0A0A0A; --bg-card: #111111; --bg-elevated: #181818; --text-primary: #F5F5F0; --text-secondary: #8A8A85; --text-muted: #555550; --accent: #C8FF00; --signal-red: #FF3B30; --border: #222220; }
+body { background: var(--bg); color: var(--text-primary); font-family: 'DM Mono', 'Courier New', monospace; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; padding: 24px 48px; background: rgba(10,10,10,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+.nav-wordmark { font-weight: 500; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--text-primary); text-decoration: none; } .nav-wordmark span { color: var(--accent); }
+.nav-links { display: flex; gap: 32px; list-style: none; } .nav-links a { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text-secondary); text-decoration: none; transition: color 0.3s; } .nav-links a:hover { color: var(--text-primary); }
+.page-wrapper { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 160px 48px 96px; }
+.contact-container { max-width: 560px; width: 100%; }
+.page-tag { font-size: 9px; letter-spacing: 5px; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; text-align: center; }
+.contact-container h1 { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; font-size: clamp(32px, 4vw, 48px); line-height: 1.15; text-align: center; margin-bottom: 20px; }
+.contact-container h1 em { color: var(--accent); font-style: italic; }
+.contact-container .lead { font-size: 13px; color: var(--text-secondary); text-align: center; line-height: 1.8; margin-bottom: 48px; }
+.tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 48px; }
+.tier { background: var(--bg-card); padding: 32px 28px; }
+.tier-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; } .tier-label.restricted { color: var(--signal-red); }
+.tier h3 { font-family: 'Instrument Serif', Georgia, serif; font-size: 18px; font-weight: 400; color: var(--text-primary); margin-bottom: 10px; }
+.tier p { font-size: 11px; color: var(--text-secondary); line-height: 1.7; }
+.contact-form { display: flex; flex-direction: column; gap: 20px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); }
+.form-input, .form-select, .form-textarea { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); font-family: 'DM Mono', monospace; font-size: 13px; padding: 14px 16px; outline: none; transition: border-color 0.3s; width: 100%; -webkit-appearance: none; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+.form-select { cursor: pointer; color: var(--text-secondary); } .form-select option { background: var(--bg-card); color: var(--text-primary); }
+.form-textarea { resize: vertical; min-height: 120px; }
+.submit-btn { padding: 16px 48px; background: transparent; border: 1px solid var(--accent); color: var(--accent); font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; cursor: pointer; transition: all 0.3s; margin-top: 12px; width: 100%; } .submit-btn:hover { background: var(--accent); color: var(--bg); }
+.form-note { font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.7; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--border); }
+footer { padding: 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; max-width: 560px; margin: 0 auto; width: 100%; } .footer-left { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); } .footer-right a { color: var(--accent); text-decoration: none; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
+@media (max-width: 768px) { nav { padding: 16px 24px; } .nav-links { display: none; } .page-wrapper { padding: 120px 24px 64px; } .tiers { grid-template-columns: 1fr; } footer { padding: 32px 24px; flex-direction: column; gap: 16px; } }
+</style>
+</head>
+<body>
+<nav><a class="nav-wordmark" href="index.html">THE CANNABIS REVIEW <span>BOARD</span></a><ul class="nav-links"><li><a href="about.html">About</a></li><li><a href="reports.html">Reports</a></li><li><a href="insights.html">Insights</a></li></ul></nav>
+<div class="page-wrapper">
+<div class="contact-container">
+  <div class="page-tag">Access</div>
+  <h1>Intelligence is <em>restricted.</em></h1>
+  <p class="lead">TCRB data is available to qualified operators, investors, institutions, and media partners. This is not open-source intelligence. This is structured, verified, and proprietary.</p>
+  <div class="tiers">
+    <div class="tier"><div class="tier-label">Public</div><h3>Published Reports</h3><p>Flagship market analyses and selected insights published on this site. Open access. No registration required.</p></div>
+    <div class="tier"><div class="tier-label restricted">Restricted</div><h3>Premium Intelligence</h3><p>Pricing indices, license tracking dashboards, brand audits, and proprietary datasets. Available by application. Reviewed individually.</p></div>
+  </div>
+  <div class="contact-form">
+    <div class="form-group"><label class="form-label">Name</label><input class="form-input" type="text" placeholder="Full name"></div>
+    <div class="form-group"><label class="form-label">Organization</label><input class="form-input" type="text" placeholder="Company or entity"></div>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="Professional email"></div>
+    <div class="form-group"><label class="form-label">Inquiry Type</label><select class="form-select"><option value="" disabled selected>Select inquiry type</option><option value="data">Data Access</option><option value="partnership">Partnership</option><option value="media">Media</option><option value="vineyard">The Vineyard Foundation</option><option value="general">General</option></select></div>
+    <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" placeholder="What are you looking for?"></textarea></div>
+    <button class="submit-btn">Submit Inquiry</button>
+  </div>
+  <p class="form-note">General inquiries receive a response within 48 hours.<br>Data licensing and partnership requests are reviewed individually.<br>No phone number. No chat widget. Deliberate friction.</p>
+</div>
+</div>
+<footer><div class="footer-left">TCRB — System of Record</div><div class="footer-right"><a href="index.html">Return to Dashboard</a></div></footer>
+</body>
+</html>
