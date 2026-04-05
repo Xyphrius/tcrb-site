@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T.C.R.B. Vote QR Code</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; background: #111;
+            font-family: 'Work Sans', sans-serif;
+        }
+        .card {
+            width: 1080px; height: 1920px;
+            background: linear-gradient(180deg, #081a0c 0%, #0e2614 40%, #0a1f0c 100%);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        /* Corner marks */
+        .card::before, .card::after,
+        .corner-bl, .corner-br {
+            position: absolute; width: 30px; height: 30px;
+        }
+        .card::before {
+            content: ''; top: 80px; left: 80px;
+            border-top: 1px solid #9c8248; border-left: 1px solid #9c8248;
+        }
+        .card::after {
+            content: ''; top: 80px; right: 80px;
+            border-top: 1px solid #9c8248; border-right: 1px solid #9c8248;
+        }
+        .corner-bl {
+            content: ''; bottom: 80px; left: 80px;
+            border-bottom: 1px solid #9c8248; border-left: 1px solid #9c8248;
+        }
+        .corner-br {
+            content: ''; bottom: 80px; right: 80px;
+            border-bottom: 1px solid #9c8248; border-right: 1px solid #9c8248;
+        }
+
+        .top-header {
+            position: absolute; top: 160px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 22px; letter-spacing: 5px;
+            color: #9c8248; text-transform: uppercase;
+            text-align: center;
+        }
+        .rule-top {
+            position: absolute; top: 210px;
+            width: 800px; height: 1px;
+            background: #9c8248;
+        }
+        .section-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 18px; letter-spacing: 10px;
+            color: #c4a35a; text-transform: uppercase;
+            margin-bottom: 60px;
+        }
+        .main-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 100px; font-weight: 400;
+            color: #f0ece4; text-align: center;
+            line-height: 1.15; margin-bottom: 10px;
+        }
+        .main-title em {
+            font-style: italic; color: #c4a35a;
+        }
+        .subtitle {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 24px; color: #8a8578;
+            text-align: center; margin-bottom: 60px;
+            max-width: 600px; line-height: 1.6;
+        }
+        .qr-frame {
+            background: #f0ece4;
+            padding: 32px; border-radius: 6px;
+            margin-bottom: 40px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+        }
+        .qr-frame canvas {
+            display: block;
+        }
+        .scan-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 16px; letter-spacing: 6px;
+            color: #c4a35a; text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .scan-desc {
+            font-size: 18px; color: #8a8578;
+            margin-bottom: 60px;
+        }
+        .diamond {
+            width: 12px; height: 12px;
+            background: #c4a35a;
+            transform: rotate(45deg);
+            margin-bottom: 50px;
+        }
+        .deadline-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 16px; letter-spacing: 6px;
+            color: #9c8248; text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .deadline {
+            font-family: 'Instrument Serif', serif;
+            font-size: 52px; color: #f0ece4;
+            margin-bottom: 80px;
+        }
+        .rule-bottom {
+            position: absolute; bottom: 160px;
+            width: 800px; height: 1px;
+            background: #9c8248;
+        }
+        .footer {
+            position: absolute; bottom: 115px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 16px; letter-spacing: 5px;
+            color: #9c8248; text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="corner-bl" style="position:absolute;"></div>
+        <div class="corner-br" style="position:absolute;"></div>
+
+        <div class="top-header">The Cannabis Review Board Inc.</div>
+        <div class="rule-top"></div>
+
+        <div class="section-label">Scan to Vote</div>
+
+        <h1 class="main-title">Cast Your<br><em>Vote</em></h1>
+
+        <p class="subtitle">Help choose the official shirt of New York's first Community Data Lab for Public Health Transparency.</p>
+
+        <div class="qr-frame" id="qr-code"></div>
+
+        <div class="scan-label">Scan with Your Camera</div>
+        <div class="scan-desc">Opens the official T.C.R.B. voting form</div>
+
+        <div class="diamond"></div>
+
+        <div class="deadline-label">Voting Closes</div>
+        <div class="deadline">June 7, 2026</div>
+
+        <div class="rule-bottom"></div>
+        <div class="footer">T.C.R.B. / Est. New York</div>
+    </div>
+
+    <script>
+        var votingUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfSBsdN8Zsf5ERONQvyoPApZDj0hL8HkGigD-bv5viyhH3YwA/viewform?pli=1';
+        var qr = qrcode(0, 'M');
+        qr.addData(votingUrl);
+        qr.make();
+
+        var moduleCount = qr.getModuleCount();
+        var cellSize = 10;
+        var size = cellSize * moduleCount;
+
+        var canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        canvas.style.width = size + 'px';
+        canvas.style.height = size + 'px';
+        var ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#f0ece4';
+        ctx.fillRect(0, 0, size, size);
+
+        for (var row = 0; row < moduleCount; row++) {
+            for (var col = 0; col < moduleCount; col++) {
+                if (qr.isDark(row, col)) {
+                    ctx.fillStyle = '#0a1f0c';
+                    ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                }
+            }
+        }
+
+        document.getElementById('qr-code').appendChild(canvas);
+    </script>
+</body>
+</html>
