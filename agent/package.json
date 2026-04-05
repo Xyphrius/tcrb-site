@@ -1,0 +1,26 @@
+{
+  "name": "tcrb-agent",
+  "version": "1.0.0",
+  "description": "TCRB Autonomous Operations Agent — Data, Social, Fundraising, Merch, Members",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "cycle": "node -e \"require('./index').runFullCycle().then(() => process.exit(0))\"",
+    "scrape": "node -e \"require('./tasks/data-scraper').scrapeMarketData().then(d => { console.log(JSON.stringify(d, null, 2)); process.exit(0); })\"",
+    "social": "node -e \"const s=require('./tasks/data-scraper'); const g=require('./tasks/social-engine'); s.scrapeMarketData().then(d => g.generateSocialPosts(d)).then(() => process.exit(0))\"",
+    "deploy": "node -e \"require('./tasks/deploy').deployToGithub().then(() => process.exit(0))\""
+  },
+  "keywords": ["cannabis", "market-data", "agent"],
+  "author": "TCRB",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "dependencies": {
+    "canvas": "^3.1.0",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "fs-extra": "^11.2.0",
+    "node-cron": "^3.0.3",
+    "node-fetch": "^2.7.0",
+    "sharp": "^0.33.5"
+  }
+}
