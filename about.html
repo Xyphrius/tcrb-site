@@ -105,10 +105,151 @@ footer { padding: 48px; border-top: 1px solid var(--border); display: flex; just
   <div class="pillar"><div class="pillar-num">03</div><h3>Industry Accountability</h3><p>Hold brands, dispensaries, and operators to consistent, visible standards. Reward excellence while exposing mediocrity.</p></div>
   <div class="pillar"><div class="pillar-num">04</div><h3>Cultural Preservation</h3><p>Document the evolving identity of cannabis across regions, communities, and generations. Protect legacy influence from being erased by commercialization.</p></div>
 </div>
-<div class="two-col">
-  <div class="col-label">05 &mdash; Data Infrastructure</div>
-  <div class="col-body"><p>Power a live ecosystem via <strong>Policy &amp; Plant</strong>&mdash;the analytical backbone of TCRB&mdash;that tracks pricing trends, product categories, operator performance, and regulatory shifts. All outputs are real-time, verifiable, and systematized.</p></div>
+<!-- 05 — DATA INFRASTRUCTURE: Policy & Plant -->
+<div style="margin: 48px 0;">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; margin-bottom: 4px;">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div style="width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s ease infinite;"></div>
+      <span style="font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent);">Policy &amp; Plant</span>
+    </div>
+    <div style="display: flex; gap: 20px; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted);">
+      <span style="color: var(--accent);">Live</span>
+      <span style="color: var(--accent);">Real-Time</span>
+      <span id="pp-task">Scanning</span>
+    </div>
+  </div>
+
+  <div style="padding: 24px 0 20px; border-top: 1px solid var(--border);">
+    <h3 style="font-family: 'Instrument Serif', Georgia, serif; font-size: 24px; font-weight: 400; color: var(--text-primary); margin-bottom: 8px;">The analytical <em style="color: var(--accent); font-style: italic;">backbone.</em></h3>
+    <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.8; max-width: 560px;">Power a live ecosystem that tracks pricing trends, product categories, operator performance, and regulatory shifts. All outputs are real-time, verifiable, and systematized.</p>
+  </div>
+
+  <div style="position: relative; border: 1px solid var(--border); background: #050505; margin: 20px 0; overflow: hidden; border-radius: 2px;">
+    <canvas id="pp-world" style="display: block; width: 100%; image-rendering: pixelated; image-rendering: crisp-edges;"></canvas>
+  </div>
+
+  <div id="pp-feed" style="border: 1px solid var(--border); background: var(--bg-card); padding: 14px 20px; height: 80px; overflow: hidden; position: relative;">
+    <div style="content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 24px; background: linear-gradient(transparent, var(--bg-card)); pointer-events: none;"></div>
+  </div>
 </div>
+<!-- END Policy & Plant -->
+
+<script>
+(function(){
+const canvas = document.getElementById('pp-world');
+if (!canvas) return;
+const ctx = canvas.getContext('2d');
+const T = 16, COLS = 24, ROWS = 14;
+canvas.width = COLS * T;
+canvas.height = ROWS * T;
+
+const PAL = {
+  grass1:'#2d5a1e', grass2:'#3a6e28', grass3:'#4a8032', grassDark:'#1e4a14',
+  path:'#8b7355', pathEdge:'#6b5a42', pathLight:'#9e8668',
+  water:'#2855a0', waterLight:'#3868b8',
+  tree1:'#1a4a10', tree2:'#2d6a1e', tree3:'#4a8a32',
+  trunk:'#5a4030', trunkDark:'#4a3020',
+  flower1:'#C8FF00', flower2:'#e8e860', flower3:'#e07070',
+  rock:'#686868', rockLight:'#808080', rockDark:'#505050',
+  sign:'#8b6b3a', signFace:'#c8b880',
+  charBody:'#2040a0', charSkin:'#e8c8a0', charHair:'#303040', charAccent:'#C8FF00',
+};
+
+const MAP = [
+  [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],
+  [3,0,0,5,0,0,3,0,0,0,7,7,0,0,0,3,0,5,0,0,0,0,5,3],
+  [3,0,0,0,0,1,1,1,0,0,7,0,0,0,0,0,0,0,0,8,0,0,0,3],
+  [3,0,8,0,0,1,3,1,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,3],
+  [3,0,0,0,0,1,0,1,1,1,1,1,1,1,0,0,0,8,0,0,6,0,0,3],
+  [3,5,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,3],
+  [3,0,0,0,0,1,0,0,2,2,2,0,0,1,0,0,0,0,0,5,0,0,0,3],
+  [3,0,0,6,0,1,0,0,2,2,2,0,0,1,1,1,1,1,0,0,0,0,0,3],
+  [3,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,8,0,0,3],
+  [3,0,8,0,0,1,1,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,5,3],
+  [3,0,0,0,0,0,0,0,0,1,0,0,6,0,0,0,0,1,1,1,1,0,0,3],
+  [3,5,0,0,0,0,0,8,0,1,1,1,1,1,1,1,1,1,0,0,1,0,0,3],
+  [3,0,0,0,7,7,0,0,0,0,0,0,0,0,5,0,0,0,0,0,1,5,0,3],
+  [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],
+];
+
+let tick = 0;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+function drawGrass(x,y,s){const r=mulberry32(s);ctx.fillStyle=r()>0.5?PAL.grass1:PAL.grass2;ctx.fillRect(x,y,T,T);if(r()>0.6){ctx.fillStyle=PAL.grass3;ctx.fillRect(x+Math.floor(r()*12)+2,y+Math.floor(r()*10)+4,1,2);}if(r()>0.7){ctx.fillStyle=PAL.grassDark;ctx.fillRect(x+Math.floor(r()*14),y+Math.floor(r()*12)+2,2,1);}}
+function drawTallGrass(x,y,s){drawGrass(x,y,s);const p=Math.sin(tick*0.03+s)*1.5;ctx.fillStyle=PAL.grass3;for(let i=0;i<4;i++){const gx=x+2+i*4+Math.floor(p);ctx.fillRect(gx,y+4,1,6);ctx.fillRect(gx-1,y+4,1,3);ctx.fillRect(gx+1,y+6,1,4);}ctx.fillStyle=PAL.tree2;for(let i=0;i<3;i++){ctx.fillRect(x+3+i*5+Math.floor(p),y+2,1,8);}}
+function drawPath(x,y){ctx.fillStyle=PAL.path;ctx.fillRect(x,y,T,T);ctx.fillStyle=PAL.pathLight;ctx.fillRect(x+3,y+2,2,1);ctx.fillRect(x+8,y+7,3,1);ctx.fillRect(x+12,y+12,2,1);ctx.fillStyle=PAL.pathEdge;ctx.fillRect(x+6,y+10,1,1);}
+function drawWater(x,y){const sh=Math.sin(tick*0.04+x*0.3+y*0.2);ctx.fillStyle=sh>0.3?PAL.waterLight:PAL.water;ctx.fillRect(x,y,T,T);ctx.fillStyle=PAL.waterLight;const rx=x+4+Math.floor(Math.sin(tick*0.02+y)*3);ctx.fillRect(rx,y+6,4,1);ctx.fillRect(rx+2,y+10,3,1);}
+function drawTree(x,y){ctx.fillStyle=PAL.trunk;ctx.fillRect(x+6,y+10,4,6);ctx.fillStyle=PAL.trunkDark;ctx.fillRect(x+6,y+10,1,6);ctx.fillStyle=PAL.tree1;ctx.fillRect(x+2,y+2,12,10);ctx.fillRect(x+1,y+4,14,6);ctx.fillStyle=PAL.tree2;ctx.fillRect(x+3,y+3,10,6);ctx.fillRect(x+4,y+2,8,2);ctx.fillStyle=PAL.tree3;ctx.fillRect(x+4,y+3,4,3);ctx.fillRect(x+5,y+2,3,2);}
+function drawFlowers(x,y,s){drawGrass(x,y,s);const r=mulberry32(s);const c=[PAL.flower1,PAL.flower2,PAL.flower3];for(let i=0;i<3;i++){ctx.fillStyle=c[Math.floor(r()*3)];ctx.fillRect(x+2+Math.floor(r()*10),y+3+Math.floor(r()*9),2,2);ctx.fillStyle=PAL.grass3;ctx.fillRect(x+2+Math.floor(r()*10),y+5+Math.floor(r()*9),1,2);}}
+function drawSign(x,y){drawGrass(x,y,x*100+y);ctx.fillStyle=PAL.sign;ctx.fillRect(x+7,y+8,2,8);ctx.fillRect(x+3,y+3,10,6);ctx.fillStyle=PAL.signFace;ctx.fillRect(x+4,y+4,8,4);ctx.fillStyle=PAL.trunk;ctx.fillRect(x+5,y+5,6,1);ctx.fillRect(x+5,y+7,4,1);}
+function drawBush(x,y){drawGrass(x,y,x*50+y);ctx.fillStyle=PAL.tree1;ctx.fillRect(x+2,y+6,12,8);ctx.fillRect(x+4,y+5,8,2);ctx.fillStyle=PAL.tree2;ctx.fillRect(x+3,y+7,10,5);ctx.fillStyle=PAL.tree3;ctx.fillRect(x+4,y+7,5,3);}
+
+function drawTile(c,r){const x=c*T,y=r*T,t=MAP[r]?.[c]??3,s=c*1000+r;switch(t){case 0:drawGrass(x,y,s);break;case 1:drawPath(x,y);break;case 2:drawWater(x,y);break;case 3:drawTree(x,y);break;case 5:drawFlowers(x,y,s);break;case 6:drawSign(x,y);break;case 7:drawTallGrass(x,y,s);break;case 8:drawBush(x,y);break;default:drawGrass(x,y,s);}}
+
+const ag={x:5*T+T/2,y:2*T+T/2,dir:0,frame:0,ft:0,state:'walk',path:[],pi:0,tt:0,td:0,bt:0};
+
+function drawChar(){const x=Math.round(ag.x),y=Math.round(ag.y);const bob=ag.state==='walk'?Math.sin(ag.bt*8)*1:0;const dy=y-7+bob,dx=x-5;
+ctx.fillStyle='rgba(0,0,0,0.15)';ctx.fillRect(dx+1,y+6,8,2);
+ctx.fillStyle=PAL.charBody;ctx.fillRect(dx+2,dy+5,6,6);
+ctx.fillStyle=PAL.charAccent;ctx.fillRect(dx+2,dy+5,6,1);
+ctx.fillStyle=PAL.charSkin;ctx.fillRect(dx+2,dy+1,6,5);
+ctx.fillStyle=PAL.charHair;ctx.fillRect(dx+2,dy,6,2);
+ctx.fillStyle='#1a1a2e';
+if(ag.dir===0){ctx.fillRect(dx+3,dy+3,1,1);ctx.fillRect(dx+6,dy+3,1,1);}
+else if(ag.dir===3){ctx.fillStyle=PAL.charHair;ctx.fillRect(dx+2,dy+1,6,3);}
+else if(ag.dir===1){ctx.fillRect(dx+2,dy+3,1,1);ctx.fillRect(dx+5,dy+3,1,1);}
+else{ctx.fillRect(dx+3,dy+3,1,1);ctx.fillRect(dx+6,dy+3,1,1);}
+ctx.fillStyle=PAL.charHair;
+if(ag.state==='walk'){const s=ag.frame%2;ctx.fillRect(dx+3,dy+11,2,2+s);ctx.fillRect(dx+6,dy+11,2,2+(1-s));}
+else{ctx.fillRect(dx+3,dy+11,2,2);ctx.fillRect(dx+6,dy+11,2,2);}
+if(ag.state==='work'){const ab=ag.frame%2;ctx.fillStyle=PAL.charSkin;ctx.fillRect(dx+1,dy+6+ab,1,3);ctx.fillRect(dx+8,dy+7-ab,1,3);}}
+
+const PATROL=[
+{col:5,row:2,task:'Scanning pricing data',tag:'SCRAPER',dur:3},
+{col:5,row:4},{col:8,row:4},{col:13,row:4},{col:13,row:7},{col:17,row:7},{col:17,row:10},
+{col:20,row:10,task:'Monitoring operator data',tag:'ANALYTICS',dur:3},
+{col:20,row:4,task:'Tracking regulatory shifts',tag:'REGULATORY',dur:2.5},
+{col:12,row:3,task:'Updating category indices',tag:'MARKET',dur:2},
+{col:5,row:7},{col:5,row:5,task:'Compiling SEE license data',tag:'EQUITY',dur:3},
+{col:5,row:3},{col:3,row:7,task:'Syncing dispensary counts',tag:'SYNC',dur:2},
+{col:9,row:9},{col:9,row:11},
+{col:13,row:11,task:'Deploying site updates',tag:'DEPLOY',dur:2},
+{col:17,row:11},{col:17,row:7},{col:13,row:4},{col:8,row:4},{col:5,row:4},
+];
+let pi=0;
+
+function buildPath(fc,fr,tc,tr){const p=[];let cx=fc,cy=fr;while(cx!==tc){cx+=cx<tc?1:-1;p.push({x:cx*T+T/2,y:cy*T+T/2});}while(cy!==tr){cy+=cy<tr?1:-1;p.push({x:cx*T+T/2,y:cy*T+T/2});}return p;}
+function startPatrol(){const t=PATROL[pi];const cc=Math.round((ag.x-T/2)/T),cr=Math.round((ag.y-T/2)/T);ag.path=buildPath(cc,cr,t.col,t.row);ag.pi=0;ag.state='walk';}
+function arrive(){const s=PATROL[pi];if(s.task){ag.state='work';ag.tt=0;ag.td=s.dur;addFeed(s.tag,s.task+'...');updInd(s.tag);}else{advance();}}
+function advance(){pi=(pi+1)%PATROL.length;startPatrol();}
+
+const feedLines=[];
+function addFeed(tag,msg){feedLines.unshift({tag,msg});if(feedLines.length>5)feedLines.pop();
+const el=document.getElementById('pp-feed');if(el)el.innerHTML=feedLines.map(l=>'<div style="font-size:10px;line-height:1.9;color:#555550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="color:#C8FF00;">['+l.tag+']</span> <span style="color:#8A8A85;">'+l.msg+'</span></div>').join('');}
+function updInd(tag){const el=document.getElementById('pp-task');if(el){el.textContent=tag;el.style.color='#C8FF00';clearTimeout(el._t);el._t=setTimeout(()=>{el.style.color='';el.textContent='Scanning';},2500);}}
+
+let lt=0;
+function update(dt){ag.ft+=dt;ag.bt+=dt;
+if(ag.state==='walk'){if(ag.ft>=0.18){ag.frame++;ag.ft=0;}
+if(ag.pi<ag.path.length){const t=ag.path[ag.pi];const dx=t.x-ag.x,dy=t.y-ag.y,d=Math.sqrt(dx*dx+dy*dy);
+if(Math.abs(dx)>Math.abs(dy))ag.dir=dx>0?2:1;else if(Math.abs(dy)>0.5)ag.dir=dy>0?0:3;
+if(d<1.5){ag.x=t.x;ag.y=t.y;ag.pi++;}else{const s=40*dt;ag.x+=(dx/d)*s;ag.y+=(dy/d)*s;}}
+else arrive();}
+else if(ag.state==='work'){if(ag.ft>=0.35){ag.frame++;ag.ft=0;}ag.tt+=dt;if(ag.tt>=ag.td){const s=PATROL[pi];if(s.task)addFeed(s.tag,s.task+' ✓');advance();}}}
+
+function render(ts){const dt=lt?Math.min((ts-lt)/1000,0.1):0.016;lt=ts;tick++;update(dt);
+ctx.clearRect(0,0,canvas.width,canvas.height);
+for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)drawTile(c,r);
+drawChar();
+ctx.fillStyle='rgba(0,0,0,0.02)';for(let y=0;y<canvas.height;y+=3)ctx.fillRect(0,y,canvas.width,1);
+requestAnimationFrame(render);}
+
+addFeed('SYSTEM','Policy & Plant initialized');
+addFeed('SYSTEM','Connected to data ecosystem');
+startPatrol();
+requestAnimationFrame(render);
+})();
+</script>
 <hr class="divider">
 <div class="page-tag">Structural Integrity</div>
 <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.8; margin: 16px 0 32px; max-width: 640px;">TCRB is designed as a dual-entity system to ensure both credibility and operational independence.</p>
