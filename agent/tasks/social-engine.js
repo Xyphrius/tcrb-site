@@ -1,8 +1,8 @@
 /**
  * TASK 3: SOCIAL ENGINE
  * Generates branded Instagram posts from market data
- * Produces: data drops, signal reports, regulatory alerts, price signals
- * Output: PNG images + caption text files
+ * ALL content stages to review queue — nothing posts without approval
+ * Output: PNG images + caption text files → pending review
  */
 const { createCanvas } = require('canvas');
 const fs = require('fs-extra');
@@ -10,21 +10,20 @@ const path = require('path');
 const { log } = require('../utils/logger');
 const { generateContent } = require('../utils/ai');
 const brand = require('../utils/brand');
+const { stageForReview } = require('./review-queue');
 
-const OUT_DIR = process.env.INSTAGRAM_OUTPUT_PATH || '/Users/supertramp/tcrb-site/instagram';
+const STAGING_DIR = path.join(__dirname, '..', 'output', 'pending');
 const W = 1080, H = 1080;
 
 async function generateSocialPosts(marketData) {
-  await fs.ensureDir(OUT_DIR);
+  await fs.ensureDir(STAGING_DIR);
   const posts = [];
   const lic = marketData.licenses || {};
   const sales = marketData.salesData || {};
   const disp = marketData.dispensaries || {};
-  const bev = marketData.beverages || {};
   const comp = marketData.computed || {};
   const ts = new Date().toISOString().slice(0, 10);
 
-  // Determine which posts to generate based on data changes
   const postQueue = [
     {
       type: 'data_drop',
@@ -50,24 +49,38 @@ async function generateSocialPosts(marketData) {
     },
   ];
 
-  // Generate each post image
+  // Generate each post and STAGE FOR REVIEW (not posted directly)
   for (const post of postQueue) {
     try {
-      const imgPath = path.join(OUT_DIR, `${post.filename}.png`);
+      // Render image to staging directory
+      const imgPath = path.join(STAGING_DIR, `${post.filename}.png`);
       await renderDataDrop(post, imgPath);
       
-      // Generate caption via AI
+      // Generate caption
       const caption = await generateCaption(post, marketData);
-      const captionPath = path.join(OUT_DIR, `${post.filename}_caption.txt`);
-      await fs.writeFile(captionPath, caption);
       
-      posts.push({ image: imgPath, caption: captionPath, type: post.type });
-      log('SOCIAL', `Generated: ${post.filename}`);
+      // Stage for review — requires manual approval before posting
+      await stageForReview('social', {
+        title: `${post.type.toUpperCase()}: ${post.metric} — ${post.label}`,
+        caption,
+        imagePath: imgPath,
+        category: post.type,
+        data: {
+          metric: post.metric,
+          label: post.label,
+          sublabel: post.sublabel,
+          timestamp: ts,
+        },
+      });
+      
+      posts.push({ image: imgPath, caption, type: post.type, status: 'pending_review' });
+      log('SOCIAL', `Staged for review: ${post.filename}`);
     } catch (err) {
       log('SOCIAL', `Failed: ${post.filename} — ${err.message}`);
     }
   }
 
+  log('SOCIAL', `${posts.length} posts staged for review. None posted.`);
   return posts;
 }
 
@@ -76,7 +89,6 @@ async function renderDataDrop(post, outPath) {
   const ctx = canvas.getContext('2d');
   const c = brand.colors;
 
-  // Background
   ctx.fillStyle = c.bg;
   ctx.fillRect(0, 0, W, H);
 
@@ -103,15 +115,12 @@ async function renderDataDrop(post, outPath) {
   ctx.fillStyle = post.accentMetric ? c.accent : c.textPrimary;
   ctx.fillText(post.metric || '', 60, 320);
 
-  // Divider
   ctx.beginPath(); ctx.moveTo(0, 380); ctx.lineTo(W, 380); ctx.stroke();
 
-  // Label
   ctx.font = '30px monospace';
   ctx.fillStyle = c.textSecondary;
   ctx.fillText(post.label || '', 60, 430);
 
-  // Sublabel
   ctx.font = '20px monospace';
   ctx.fillStyle = c.textMuted;
   ctx.fillText(post.sublabel || '', 60, 480);
@@ -124,7 +133,6 @@ async function renderDataDrop(post, outPath) {
   ctx.fillStyle = c.textMuted;
   ctx.fillText('SYSTEM OF RECORD', W - 260, H - 50);
 
-  // Save
   const buf = canvas.toBuffer('image/png');
   await fs.writeFile(outPath, buf);
 }
@@ -145,14 +153,13 @@ Rules:
 - 3 lines maximum
 - Line 1: the data point or headline
 - Line 2-3: one sentence of context
-- No emojis, no exclamation marks, no hashtags in caption
-- End with "TCRB. System of record." or similar tag
+- No emojis, no exclamation marks, no hashtags
+- End with "TCRB. System of record." or similar
 - Tone: precise, controlled, analytical`;
 
   try {
     return await generateContent(prompt, { maxTokens: 200 });
   } catch {
-    // Fallback if AI unavailable
     return `${post.metric}\n${post.label}.\nNew York State cannabis market.\nTCRB. System of record.`;
   }
 }

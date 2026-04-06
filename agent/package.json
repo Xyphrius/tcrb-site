@@ -5,10 +5,12 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "cycle": "node -e \"require('./index').runFullCycle().then(() => process.exit(0))\"",
-    "scrape": "node -e \"require('./tasks/data-scraper').scrapeMarketData().then(d => { console.log(JSON.stringify(d, null, 2)); process.exit(0); })\"",
-    "social": "node -e \"const s=require('./tasks/data-scraper'); const g=require('./tasks/social-engine'); s.scrapeMarketData().then(d => g.generateSocialPosts(d)).then(() => process.exit(0))\"",
-    "deploy": "node -e \"require('./tasks/deploy').deployToGithub().then(() => process.exit(0))\""
+    "review": "node review-server.js",
+    "cycle": "node -e \"require('dotenv').config(); require('./index').runFullCycle().then(() => process.exit(0))\"",
+    "scrape": "node -e \"require('dotenv').config(); require('./tasks/data-scraper').scrapeMarketData().then(d => { console.log(JSON.stringify(d, null, 2)); process.exit(0); })\"",
+    "social": "node -e \"require('dotenv').config(); const s=require('./tasks/data-scraper'); const g=require('./tasks/social-engine'); s.scrapeMarketData().then(d => g.generateSocialPosts(d)).then(() => process.exit(0))\"",
+    "pending": "node -e \"require('./tasks/review-queue').getPending().then(p => { console.log(p.length + ' pending items'); p.forEach(i => console.log('  [' + i.id + '] ' + i.type + ': ' + i.title)); process.exit(0); })\"",
+    "deploy": "node -e \"require('dotenv').config(); require('./tasks/deploy').deployToGithub().then(() => process.exit(0))\""
   },
   "keywords": ["cannabis", "market-data", "agent"],
   "author": "TCRB",
