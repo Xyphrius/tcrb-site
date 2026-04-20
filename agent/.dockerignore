@@ -1,0 +1,18 @@
+# Local development files
+node_modules
+.env
+.env.local
+.DS_Store
+*.log
+npm-debug.log*
+
+# Local agent output (uses persistent volume in production)
+output
+
+# Local git
+.git
+.gitignore
+
+# Editor
+.vscode
+.idea

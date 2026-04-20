@@ -1,8 +1,12 @@
 /**
  * TCRB REVIEW SERVER
- * Local dashboard for reviewing and approving agent-generated content
- * Run: node review-server.js
- * Opens: http://localhost:3847
+ * HTTP dashboard for reviewing/approving agent-generated content.
+ *
+ * Production: served on $PORT (default 8080), behind HTTP basic auth.
+ * Local dev:  `npm run review` → http://localhost:8080
+ *
+ * Auth: set REVIEW_USERNAME and REVIEW_PASSWORD env vars.
+ *       If REVIEW_PASSWORD is unset, the server runs WITHOUT auth (local dev only).
  */
 const http = require('http');
 const fs = require('fs-extra');
@@ -10,17 +14,68 @@ const path = require('path');
 const { approveItem, rejectItem, getPending, getFullQueue } = require('./tasks/review-queue');
 const { log } = require('./utils/logger');
 
-const PORT = 3847;
+const PORT = parseInt(process.env.PORT || '8080', 10);
+const HOST = process.env.HOST || '0.0.0.0';
 const PENDING_DIR = path.join(__dirname, 'output', 'pending');
+const REVIEW_USERNAME = process.env.REVIEW_USERNAME || 'tcrb';
+const REVIEW_PASSWORD = process.env.REVIEW_PASSWORD || null;
+const AUTH_ENABLED = !!REVIEW_PASSWORD;
 
-const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url, `http://localhost:${PORT}`);
+function checkAuth(req) {
+  if (!AUTH_ENABLED) return true;
+  const header = req.headers.authorization || '';
+  if (!header.startsWith('Basic ')) return false;
+  try {
+    const decoded = Buffer.from(header.slice(6), 'base64').toString('utf8');
+    const [user, pass] = decoded.split(':');
+    return user === REVIEW_USERNAME && pass === REVIEW_PASSWORD;
+  } catch {
+    return false;
+  }
+}
 
-  // CORS headers
+function requireAuth(res) {
+  res.writeHead(401, {
+    'WWW-Authenticate': 'Basic realm="TCRB Review", charset="UTF-8"',
+    'Content-Type': 'text/plain',
+  });
+  res.end('Authentication required');
+}
+
+function getBody(req) {
+  return new Promise((resolve, reject) => {
+    let data = '';
+    req.on('data', chunk => data += chunk);
+    req.on('end', () => resolve(data));
+    req.on('error', reject);
+  });
+}
+
+async function handleRequest(req, res) {
+  const url = new URL(req.url, `http://${req.headers.host}`);
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') { res.writeHead(200); res.end(); return; }
+
+  // Public health check (no auth) — used by Fly.io health checks
+  if (url.pathname === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      status: 'ok',
+      service: 'tcrb-agent',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+    }));
+    return;
+  }
+
+  // All other routes require auth (if enabled)
+  if (!checkAuth(req)) {
+    requireAuth(res);
+    return;
+  }
 
   try {
     // API: Get all pending items
@@ -84,21 +139,25 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: err.message }));
   }
-});
-
-function getBody(req) {
-  return new Promise((resolve, reject) => {
-    let data = '';
-    req.on('data', chunk => data += chunk);
-    req.on('end', () => resolve(data));
-    req.on('error', reject);
-  });
 }
 
-server.listen(PORT, () => {
-  log('REVIEW', `Dashboard live at http://localhost:${PORT}`);
-  log('REVIEW', 'Waiting for content review...');
-});
+function createServer() {
+  const server = http.createServer((req, res) => {
+    handleRequest(req, res).catch(err => {
+      log('REVIEW', `Unhandled error: ${err.message}`);
+      try {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal server error' }));
+      } catch {}
+    });
+  });
+
+  server.listen(PORT, HOST, () => {
+    log('REVIEW', `Dashboard live at http://${HOST}:${PORT} (auth: ${AUTH_ENABLED ? 'on' : 'off'})`);
+  });
+
+  return server;
+}
 
 function getDashboardHTML() {
   return `<!DOCTYPE html>
@@ -199,7 +258,7 @@ function filterItems(status) {
 function renderItems() {
   const grid = document.getElementById('items-grid');
   let items = currentFilter === 'all' ? allItems : allItems.filter(i => i.status === currentFilter);
-  
+
   if (items.length === 0) {
     grid.innerHTML = '<div class="empty">No ' + currentFilter + ' items.</div>';
     return;
@@ -209,14 +268,14 @@ function renderItems() {
     const typeClass = item.type || 'social';
     const imgTag = item.imagePath ? '<img class="card-image" src="/images/' + item.imagePath.split('/').pop() + '" />' : '';
     const badge = '<span class="badge ' + item.status + '">' + item.status + '</span>';
-    const actions = item.status === 'pending' ? 
+    const actions = item.status === 'pending' ?
       '<input class="note-input" id="note-' + item.id + '" placeholder="Review note (optional)">' +
       '<div class="card-actions">' +
         '<button class="btn btn-approve" onclick="approve(\\'' + item.id + '\\')">Approve</button>' +
         '<button class="btn btn-reject" onclick="reject(\\'' + item.id + '\\')">Reject</button>' +
-      '</div>' : 
+      '</div>' :
       (item.reviewNote ? '<div class="card-meta">Note: ' + item.reviewNote + '</div>' : '');
-    
+
     return '<div class="card">' +
       '<div class="card-type ' + typeClass + '">' + item.type + ' / ' + (item.category || '') + '</div>' +
       badge +
@@ -265,4 +324,11 @@ setInterval(loadItems, 10000);
 </script>
 </body>
 </html>`;
+}
+
+module.exports = { createServer, getDashboardHTML };
+
+// Direct invocation: `node review-server.js` starts the server standalone
+if (require.main === module) {
+  createServer();
 }
